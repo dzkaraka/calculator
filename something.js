@@ -1,6 +1,7 @@
 var express = require('express')
 var bodyParser = require('body-parser')
 const { Pool } = require('pg')
+var RateLimit = require('express-rate-limit')
 
 const pool = new Pool({
     user: 'dbuser',
@@ -12,6 +13,11 @@ const pool = new Pool({
 
 var test;
 var app = express()
+var limiter = RateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // max 100 requests per windowMs
+});
+app.use(limiter);
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
     extended: true
